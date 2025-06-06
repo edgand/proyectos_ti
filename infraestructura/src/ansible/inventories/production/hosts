@@ -1,0 +1,35 @@
+# Inventario de producción
+
+[webservers]
+web01.prod.example.com ansible_host=10.0.1.10
+web02.prod.example.com ansible_host=10.0.1.11
+web03.prod.example.com ansible_host=10.0.1.12
+
+[dbservers]
+db01.prod.example.com ansible_host=10.0.2.10
+db02.prod.example.com ansible_host=10.0.2.11
+
+[loadbalancers]
+lb01.prod.example.com ansible_host=10.0.0.10
+lb02.prod.example.com ansible_host=10.0.0.11
+
+[monitoring]
+monitor01.prod.example.com ansible_host=10.0.3.10
+
+[backup]
+backup01.prod.example.com ansible_host=10.0.3.20
+
+[production:children]
+webservers
+dbservers
+loadbalancers
+monitoring
+backup
+
+[production:vars]
+ansible_user=ansible
+ansible_ssh_private_key_file=/path/to/private_key
+ansible_become=yes
+ansible_become_method=sudo
+environment=production
+

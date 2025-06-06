@@ -1,0 +1,45 @@
+name: Terraform Validate
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'src/terraform/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'src/terraform/**'
+
+jobs:
+  validate:
+    name: Validate Terraform Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.0.0
+      
+      - name: Terraform Format Check
+        run: |
+          cd src/terraform/aws
+          terraform fmt -check -recursive
+      
+      - name: Terraform Init
+        run: |
+          cd src/terraform/aws
+          terraform init -backend=false
+      
+      - name: Terraform Validate
+        run: |
+          cd src/terraform/aws
+          terraform validate
+

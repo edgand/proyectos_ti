@@ -1,0 +1,159 @@
+---
+# Playbook para configurar servidores web
+- name: Configurar servidores web
+  hosts: webservers
+  become: yes
+  vars_files:
+    - ../vars/webserver_vars.yml
+  
+  tasks:
+    - name: Actualizar caché de paquetes
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+    
+    - name: Instalar paquetes necesarios
+      package:
+        name: "{{ webserver_packages }}"
+        state: present
+    
+    - name: Asegurar que Nginx está instalado
+      package:
+        name: nginx
+        state: present
+    
+    - name: Asegurar que Nginx está habilitado y ejecutándose
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+    
+    - name: Crear directorio para la aplicación web
+      file:
+        path: "{{ app_directory }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: '0755'
+    
+    - name: Copiar archivos de configuración de Nginx
+      template:
+        src: ../templates/nginx_vhost.conf.j2
+        dest: /etc/nginx/sites-available/{{ app_name }}.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: reload nginx
+    
+    - name: Habilitar sitio en Nginx
+      file:
+        src: /etc/nginx/sites-available/{{ app_name }}.conf
+        dest: /etc/nginx/sites-enabled/{{ app_name }}.conf
+        state: link
+      notify: reload nginx
+    
+    - name: Eliminar configuración por defecto de Nginx
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: reload nginx
+    
+    - name: Instalar certificado SSL
+      block:
+        - name: Instalar Certbot
+          package:
+            name: 
+              - certbot
+              - python3-certbot-nginx
+            state: present
+          when: ansible_os_family == "Debian"
+        
+        - name: Obtener certificado SSL
+          command: >
+            certbot --nginx -d {{ domain_name }} --non-interactive --agree-tos --email {{ admin_email }}
+          args:
+            creates: /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem
+      when: enable_ssl | bool
+    
+    - name: Configurar firewall (UFW)
+      block:
+        - name: Instalar UFW
+          package:
+            name: ufw
+            state: present
+        
+        - name: Permitir SSH
+          ufw:
+            rule: allow
+            name: OpenSSH
+        
+        - name: Permitir HTTP
+          ufw:
+            rule: allow
+            port: '80'
+            proto: tcp
+        
+        - name: Permitir HTTPS
+          ufw:
+            rule: allow
+            port: '443'
+            proto: tcp
+          when: enable_ssl | bool
+        
+        - name: Habilitar UFW
+          ufw:
+            state: enabled
+            policy: deny
+      when: configure_firewall | bool
+    
+    - name: Configurar monitoreo básico
+      block:
+        - name: Instalar herramientas de monitoreo
+          package:
+            name: "{{ monitoring_packages }}"
+            state: present
+        
+        - name: Configurar logrotate para logs de Nginx
+          template:
+            src: ../templates/nginx_logrotate.j2
+            dest: /etc/logrotate.d/nginx
+            owner: root
+            group: root
+            mode: '0644'
+      when: enable_monitoring | bool
+    
+    - name: Configurar respaldo automático
+      block:
+        - name: Instalar herramientas de respaldo
+          package:
+            name: "{{ backup_packages }}"
+            state: present
+        
+        - name: Crear script de respaldo
+          template:
+            src: ../templates/backup_script.sh.j2
+            dest: /usr/local/bin/backup_website.sh
+            owner: root
+            group: root
+            mode: '0755'
+        
+        - name: Configurar cron para respaldos
+          cron:
+            name: "Backup website"
+            hour: "3"
+            minute: "0"
+            job: "/usr/local/bin/backup_website.sh"
+      when: enable_backups | bool
+  
+  handlers:
+    - name: reload nginx
+      service:
+        name: nginx
+        state: reloaded
+    
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+

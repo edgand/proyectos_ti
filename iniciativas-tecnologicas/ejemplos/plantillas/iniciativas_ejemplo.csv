@@ -1,0 +1,17 @@
+id,nombre,descripcion,capa,fecha_inicio,fecha_fin,estado,responsable,prioridad
+MKT-001,Análisis de tendencias del mercado,Estudio de tendencias tecnológicas y su impacto en el mercado,mercado,2025-05-01,2025-08-01,en_progreso,Departamento de Marketing,Alta
+MKT-002,Análisis de competidores,Evaluación de soluciones tecnológicas de competidores,mercado,2025-09-01,2025-12-01,planificado,Departamento de Marketing,Media
+PROD-001,Rediseño de interfaz de usuario,Modernización de la interfaz de usuario de la plataforma principal,producto,2025-04-01,2025-07-01,en_progreso,Equipo de UX/UI,Alta
+PROD-002,Desarrollo de aplicación móvil,Creación de aplicación móvil para clientes,producto,2025-07-01,2025-12-31,planificado,Equipo de Desarrollo Móvil,Alta
+TECH-001,Migración a microservicios,Transformación de la arquitectura monolítica a microservicios,tecnologia,2025-03-01,2025-12-31,en_progreso,Equipo de Arquitectura,Alta
+TECH-002,Implementación de CI/CD,Configuración de pipeline de integración y despliegue continuo,tecnologia,2025-04-15,2025-06-15,completado,Equipo DevOps,Media
+TECH-003,Adopción de contenedores,Migración de aplicaciones a contenedores Docker y Kubernetes,tecnologia,2025-08-01,2025-11-01,planificado,Equipo de Infraestructura,Alta
+CAP-001,Capacitación en Cloud Native,Programa de formación en tecnologías cloud native,capacidades,2025-07-01,2025-10-01,planificado,Departamento de RRHH,Media
+CAP-002,Contratación especialistas IA,Incorporación de especialistas en inteligencia artificial,capacidades,2025-12-01,2026-03-01,planificado,Departamento de RRHH,Baja
+TECH-004,Implementación de IA para análisis predictivo,Desarrollo de modelos de IA para análisis predictivo de datos de clientes,tecnologia,2026-06-01,2026-12-01,planificado,Equipo de Ciencia de Datos,Media
+PROD-003,Integración con plataformas de terceros,Desarrollo de APIs para integración con plataformas externas,producto,2025-10-01,2026-02-01,planificado,Equipo de Integración,Media
+MKT-003,Estrategia de transformación digital,Definición de estrategia de transformación digital para los próximos 3 años,mercado,2025-11-01,2026-01-31,planificado,Comité de Dirección,Alta
+TECH-005,Implementación de blockchain para trazabilidad,Desarrollo de solución basada en blockchain para trazabilidad de productos,tecnologia,2026-01-01,2026-06-30,planificado,Equipo de Innovación,Baja
+CAP-003,Centro de excelencia en DevOps,Creación de un centro de excelencia en prácticas DevOps,capacidades,2025-09-01,2026-03-01,planificado,Departamento de TI,Media
+TECH-006,Migración a arquitectura serverless,Adopción de arquitectura serverless para aplicaciones seleccionadas,tecnologia,2026-03-01,2026-09-01,planificado,Equipo de Arquitectura,Media
+

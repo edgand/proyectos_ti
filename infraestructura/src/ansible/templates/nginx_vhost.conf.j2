@@ -1,0 +1,46 @@
+server {
+    listen 80;
+    server_name {{ domain_name }};
+    
+    root {{ app_directory }};
+    index index.html index.htm index.php;
+    
+    access_log /var/log/nginx/{{ app_name }}_access.log;
+    error_log /var/log/nginx/{{ app_name }}_error.log;
+    
+    # Configuración de seguridad
+    {% for header in security_headers %}
+    add_header {{ header }};
+    {% endfor %}
+    
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+    
+    # Configuración de PHP
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    
+    # Denegar acceso a archivos ocultos
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+    
+    # Configuración de caché para archivos estáticos
+    {% if enable_cache %}
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+    
+    # Configuración de caché proxy
+    proxy_cache_path {{ cache_directory }} levels=1:2 keys_zone=STATIC:10m inactive={{ cache_inactive }} max_size={{ cache_max_size }};
+    {% endif %}
+}
+

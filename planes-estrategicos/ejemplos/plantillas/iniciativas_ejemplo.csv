@@ -1,0 +1,17 @@
+id,nombre,descripcion,categoria,inicio,fin,dependencias,responsable,prioridad,estado
+ID1,Migración a Cloud,Migrar infraestructura a AWS,Infraestructura,2025-01,2025-06,,Dept. TI,Alta,No iniciado
+ID2,Implementación CRM,Implementar Salesforce,Aplicaciones,2025-03,2025-09,ID1,Dept. Ventas,Alta,No iniciado
+ID3,Modernización ERP,Actualizar sistema ERP a última versión,Aplicaciones,2025-07,2026-02,ID1,Dept. Finanzas,Media,No iniciado
+ID4,Data Warehouse,Implementar solución de Data Warehouse,Datos,2025-04,2025-10,ID1,Dept. TI,Alta,No iniciado
+ID5,Implementación IAM,Sistema de gestión de identidades,Seguridad,2025-02,2025-05,,Dept. Seguridad,Alta,No iniciado
+ID6,Automatización DevOps,Implementar pipeline CI/CD,Infraestructura,2025-05,2025-09,ID1,Dept. Desarrollo,Media,No iniciado
+ID7,Plataforma BI,Implementar herramientas de Business Intelligence,Datos,2025-11,2026-03,ID4,Dept. BI,Media,No iniciado
+ID8,Modernización Red,Actualizar infraestructura de red,Infraestructura,2025-08,2026-01,,Dept. TI,Media,No iniciado
+ID9,Implementación SIEM,Sistema de gestión de eventos de seguridad,Seguridad,2025-06,2025-11,ID5,Dept. Seguridad,Alta,No iniciado
+ID10,Portal Clientes,Desarrollo de portal de autoservicio para clientes,Aplicaciones,2025-10,2026-04,ID2,Dept. Ventas,Media,No iniciado
+ID11,Migración Correo,Migrar sistema de correo a la nube,Infraestructura,2025-03,2025-07,ID1,Dept. TI,Baja,No iniciado
+ID12,Gestión APIs,Implementar plataforma de gestión de APIs,Aplicaciones,2025-09,2026-02,ID6,Dept. Desarrollo,Media,No iniciado
+ID13,DRP Cloud,Implementar plan de recuperación de desastres en la nube,Seguridad,2025-12,2026-05,ID1,Dept. TI,Alta,No iniciado
+ID14,Gobierno de Datos,Implementar políticas y herramientas de gobierno de datos,Datos,2025-07,2026-01,ID4,Dept. TI,Alta,No iniciado
+ID15,Transformación Digital RR.HH.,Digitalizar procesos de recursos humanos,Procesos,2025-05,2025-11,,Dept. RRHH,Media,No iniciado
+

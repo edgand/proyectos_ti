@@ -1,0 +1,67 @@
+---
+# Variables para la configuración de servidores web
+
+# Información de la aplicación
+app_name: "webapp"
+app_directory: "/var/www/{{ app_name }}"
+app_user: "www-data"
+app_group: "www-data"
+domain_name: "example.com"
+admin_email: "admin@example.com"
+
+# Paquetes a instalar
+webserver_packages:
+  - nginx
+  - curl
+  - vim
+  - git
+  - python3
+  - python3-pip
+  - fail2ban
+  - unzip
+
+# Configuración de SSL
+enable_ssl: true
+
+# Configuración de firewall
+configure_firewall: true
+
+# Configuración de monitoreo
+enable_monitoring: true
+monitoring_packages:
+  - htop
+  - atop
+  - iotop
+  - sysstat
+  - net-tools
+  - iftop
+
+# Configuración de respaldos
+enable_backups: true
+backup_packages:
+  - rsync
+  - duplicity
+backup_directory: "/var/backups/{{ app_name }}"
+backup_retention_days: 30
+
+# Configuración de Nginx
+nginx_worker_processes: "auto"
+nginx_worker_connections: 1024
+nginx_keepalive_timeout: 65
+nginx_client_max_body_size: "10M"
+
+# Configuración de seguridad
+security_headers:
+  - "X-Content-Type-Options: nosniff"
+  - "X-Frame-Options: SAMEORIGIN"
+  - "X-XSS-Protection: 1; mode=block"
+  - "Referrer-Policy: strict-origin-when-cross-origin"
+  - "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+
+# Configuración de caché
+enable_cache: true
+cache_directory: "/var/cache/nginx"
+cache_max_size: "1g"
+cache_inactive: "60m"
+cache_valid_time: "60m"
+
